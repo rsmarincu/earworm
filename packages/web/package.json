@@ -28,6 +28,7 @@
     "react-dom": "^18",
     "spotify-web-api-js": "^1.5.2",
     "spotify-web-api-node": "^5.0.2",
+    "string-similarity-js": "^2.1.4",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7"
   },

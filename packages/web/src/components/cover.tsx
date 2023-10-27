@@ -1,26 +1,16 @@
 import { useEffect, useState } from 'react'
-import useSpotify from '@/hooks/useSpotify';
+import sdk from "@/lib/ClientInstance";
+import { Track } from '@spotify/web-api-ts-sdk';
+import useGame from '@/providers/game';
 
 
 interface Props {
-    songId: string
-    blurred: boolean
+
 }
 
-const Cover: React.FC<Props> = ({ songId, blurred }) => {
-    const [track, setTrack] = useState<SpotifyApi.SingleTrackResponse>()
-    const spotifyApi = useSpotify()
-
-    useEffect(() => {
-        const getTrack = async () => {
-
-            const song = await spotifyApi.getTrack(songId)
-
-            setTrack(song.body)
-        }
-        getTrack()
-    }, [songId]);
-
+const Cover: React.FC<Props> = ({ }) => {
+    const game = useGame()
+    const track = game.game.currentTrack?.track
 
     return (
         <>
@@ -43,7 +33,7 @@ const Cover: React.FC<Props> = ({ songId, blurred }) => {
 
                         <image width={track.album.images[0].width} height={track.album.images[0].height}
                             preserveAspectRatio="xMidYMid"
-                            filter={blurred ? "url(#pixelate)" : ""}
+                            filter={game.game.currentTrack?.guessed ? "" : "url(#pixelate)"}
                             xlinkHref={track.album.images[0].url} />
                     </svg>
                 </div>

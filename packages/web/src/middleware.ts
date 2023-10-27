@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
     const token = await getToken({ req })
-    console.log(token)
+
     const { pathname } = req.nextUrl
     if (pathname.includes('/api/auth') || token) {
         return NextResponse.next();
