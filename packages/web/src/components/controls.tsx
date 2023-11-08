@@ -81,21 +81,14 @@ const Controls: React.FC = () => {
                     <div className="flex flex-col sm:grid grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-x-10 w-full px-10">
                         {genres.map((g, i) => {
                             return (
-                                <div className="relative">
-                                    {selectedGenres.includes(g) &&
-                                        <div className={`${selectedGenres.includes(g) ? "transition-all absolute w-full aspect-square delay-50 ease-in-out duration-300 rounded-full bg-gray-900 -mt-10" : "hidden mt-0"} `}>
-
-                                        </div>
-                                    }
-                                    <div onClick={() => {
-                                        setSelectedGenres(g)
-                                    }} key={i} className={`
+                                <div onClick={() => {
+                                    setSelectedGenres(g)
+                                }} key={i} className={`
                                             relative border-t-[1px] border-x-[1px] rounded-t-md transition-hover duration-150 ease-in-out border-gray-500 hover:-mt-3 py-2 -mb-5 w-full 
                                             ${i >= genres.length - breakP ? "sm:aspect-square rounded-md border" : ""}  
                                             ${selectedGenres.includes(g) ? " bg-teal-400 -mt-3 " : "bg-white"} 
                                             `}>
-                                        <p className="font-bold text-2xl mx-2 2xl:text-4xl">{g.label}</p>
-                                    </div>
+                                    <p className="font-bold text-2xl mx-2 2xl:text-4xl">{g.label}</p>
                                 </div>
                             )
                         })}
