@@ -1,21 +1,28 @@
-import { eras, genres } from "@/lib/spotify";
+import { Track } from "@spotify/web-api-ts-sdk";
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 
 
-type Track = {
-    id: string
-
+type CurrentTrack = {
+    track: Track
+    guessed: boolean
 }
 
-type Game = {
-    score: number
-    genres: string
-    eras: string
 
-}
 type GameState = {
-    game: Game
-    setGame(game: Game): void
+    score: number
+    setScore(score: number): void
+
+    currentTrack?: CurrentTrack
+    setCurrentTrack(track: CurrentTrack): void
+
+    toGuess: Track[]
+    setToGuess(tracks: Track[]): void
+
+    guessed: Track[]
+    setGuessed(tracks: Track[]): void
+
+    finished: boolean
+    setFinished(f: boolean): void
 }
 
 const useGame = (): GameState => {
@@ -31,9 +38,26 @@ const useGame = (): GameState => {
 const GameContext = createContext<GameState | null>(null);
 
 export const GameProvider = (props: PropsWithChildren) => {
-    const [game, setGame] = useState<Game>({ score: 0, eras: eras[0].value, genres: genres[0].value });
+    const [score, setScore] = useState<number>(0);
+    const [currentTrack, setCurrentTrack] = useState<CurrentTrack>()
+    const [toGuess, setToGuess] = useState<Track[]>([])
+    const [guessed, setGuessed] = useState<Track[]>([])
+    const [finished, setFinished] = useState<boolean>(false)
+
+
     return (
-        <GameContext.Provider value={{ game, setGame }}>
+        <GameContext.Provider value={{
+            score,
+            setScore,
+            currentTrack,
+            setCurrentTrack,
+            toGuess,
+            setToGuess,
+            guessed,
+            setGuessed,
+            finished,
+            setFinished
+        }}>
             {props.children}
         </GameContext.Provider>
     )
