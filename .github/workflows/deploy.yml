@@ -19,7 +19,7 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: Deploy
         env:
@@ -28,5 +28,4 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ env.NEXTAUTH_URL }}
         run: |
-          npx prisma generate
           npx sst deploy --stage prod
