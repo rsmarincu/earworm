@@ -1,5 +1,22 @@
 import useGame from '@/providers/game';
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+
+interface EmbedController {
+    togglePlay(): void
+    loadUri(s: string): void
+}
+
+type controllerOptions = {
+    width: string,
+    height: string
+    uri: string
+}
+
+interface IFrameAPI {
+    createController(element: HTMLElement | null, options: controllerOptions, callback: (e: EmbedController) => void): void
+}
+
+
 
 const Player: React.FC = () => {
     const game = useGame()
@@ -12,14 +29,14 @@ const Player: React.FC = () => {
         document.body.appendChild(script);
 
         if (game.currentTrack) {
-            window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            window.onSpotifyIframeApiReady = (IFrameAPI: IFrameAPI) => {
                 const element = document.getElementById("embed-iframe");
                 const options = {
                     width: '100%',
                     height: '0',
                     uri: uri,
                 };
-                const callback = (EmbedController) => {
+                const callback = (EmbedController: EmbedController) => {
                     const togglePlayButton = document.getElementById('playButton')
                     togglePlayButton?.addEventListener("click", () => {
                         EmbedController.togglePlay()
