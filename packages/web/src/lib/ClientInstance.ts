@@ -1,11 +1,11 @@
+import { AuthUser } from "@/pages/api/auth/[...nextauth]";
 import {
     AccessToken,
     IAuthStrategy,
     SdkConfiguration,
     SdkOptions,
     SpotifyApi,
-} from "@spotify/web-api-ts-sdk"
-import { AuthUser } from "@/pages/api/auth/[...nextauth]";
+} from "@spotify/web-api-ts-sdk";
 import { getSession, signIn } from "next-auth/react";
 
 /**

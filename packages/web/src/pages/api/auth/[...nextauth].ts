@@ -1,7 +1,6 @@
-import NextAuth from "next-auth";
-import { JWT } from "next-auth/jwt";
 import spotifyProfile, { refreshAccessToken } from "@/lib/spotifyProfile";
-import { Account, AuthOptions } from "next-auth";
+import NextAuth, { Account, AuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
 
 export type AuthUser = {
