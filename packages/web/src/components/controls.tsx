@@ -1,39 +1,34 @@
-import { Fragment, useState } from 'react';
-import { Genre, genres, Era, eras } from '@/lib/spotify';
-import { Listbox, Transition } from '@headlessui/react'
-import { ChevronsUpDownIcon, CheckIcon } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast"
-import { Button } from './ui/button';
-import useGame from '@/providers/game';
+import { useToast } from "@/components/ui/use-toast";
 import sdk from "@/lib/ClientInstance";
-import { Provider } from '@radix-ui/react-toast';
+import { Genre, genres } from '@/lib/spotify';
+import useWindowSize from '@/lib/useWindowSize';
+import useGame from '@/providers/game';
 import { Track } from '@spotify/web-api-ts-sdk';
+import { useState } from 'react';
+import { Button } from './ui/button';
 import { testTracks } from './ui/testTracks';
-
-
 
 const Controls: React.FC = () => {
     const { toast } = useToast()
-    const game = useGame()
+    const size = useWindowSize();
 
+    const { setScore, setToGuess, setCurrentTrack, setFinished } = useGame()
     const [selectedGenres, setGenres] = useState<Array<Genre>>([genres[0]])
-    const [selectedEras, setEras] = useState<Array<Era>>([eras[0]])
-
 
     async function onPlay() {
-        // const from = selectedEras.reduce(function (prev, current) {
-        //     return (prev && prev.from < current.from) ? prev : current
-        // })
-        // const to = selectedEras.reduce(function (prev, current) {
-        //     return (prev && prev.to > current.to) ? prev : current
-        // })
+        setFinished(false)
+        if (selectedGenres.length == 0) {
+            toast({
+                title: "Select some genres",
+                description: "Please select at least one genre to start."
+            })
+            return
+        }
         let tracks: Track[]
         if (process.env.NODE_ENV === "development") {
             tracks = testTracks
-            console.log("test tracks")
 
         } else {
-            console.log("calling")
             const resp = await sdk.recommendations.get({
                 seed_genres: selectedGenres.map(g => g.value),
             })
@@ -42,87 +37,76 @@ const Controls: React.FC = () => {
 
         const nextTrack = tracks.shift()
         if (!nextTrack) {
-            game.setGame({
-                score: 0,
-                toGuess: tracks
-            })
+            setScore(0)
+            setToGuess(tracks)
         } else {
-            game.setGame({
-                score: 0,
-                currentTrack: {
-                    track: nextTrack,
-                    guessed: false,
-                },
-                toGuess: tracks
+            setScore(0)
+            setCurrentTrack({
+                track: nextTrack,
+                guessed: false
             })
+            setToGuess(tracks)
         }
     }
 
 
-    return (
-        <div className="flex flex-col space-y-4">
-            <div className='flex justify-between space-x-4 text-input'>
-                <div className='w-72'>
-                    <Listbox value={selectedGenres} onChange={(value) => {
-                        if (value.length <= 3) {
-                            setGenres(value)
-                        } else {
-                            toast({
-                                title: "Genres",
-                                description: "You can only select a maximum of 3 genres."
-                            })
-                        }
-                    }} multiple>
-                        <div className="relative mt-1 ">
-                            <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                                <span className="block truncate">{selectedGenres.map((genre) => genre.label).join(", ")}</span>
-                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronsUpDownIcon
-                                        className="h-5 w-5 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                </span>
-                            </Listbox.Button>
-                            <Transition
-                                as={Fragment}
-                                leave="transition ease-in duration-100"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                    {genres.map((genre) => (
-                                        <Listbox.Option key={genre.value} value={genre} className={({ active }) =>
-                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
-                                            }`
-                                        }>
-                                            {({ selected }) => (
-                                                <>
-                                                    <span
-                                                        className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                                                            }`}
-                                                    >
-                                                        {genre.label}
-                                                    </span>
-                                                    {selected ? (
-                                                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                                        </span>
-                                                    ) : null}
-                                                </>
-                                            )}
-                                        </Listbox.Option>
-                                    ))}
-                                </Listbox.Options>
-                            </Transition>
+    let breakP = size.width > 1279 ? 5 : 3
+    breakP = size.width > 1440 ? 6 : breakP
 
-                        </div>
-                    </Listbox>
-                </ div >
+    function setSelectedGenres(genre: Genre) {
+        if (selectedGenres.includes(genre)) {
+            setGenres(selectedGenres.filter(g => g.value != genre.value))
+            return
+        }
+
+        if (selectedGenres.length == 3) {
+            toast({
+                title: "Maximum genres selected",
+                description: "You can select a maximum of 3 genres."
+            })
+            return
+        }
+
+        setGenres([...selectedGenres, genre])
+    }
+
+
+    return (
+        <>
+            <div className="flex flex-col space-y-10 w-full mb-8 ">
+                <div className="w-full flex justify-center">
+                    <p className="font-bold bg-white border w-1/4 text-center border-gray-500 text-2xl px-4 py-2 rounded-md text-input">SELECT A GENRE</p>
+                </div>
+                <div className='text-input'>
+                    <div className="flex flex-col sm:grid grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-x-10 w-full px-10">
+                        {genres.map((g, i) => {
+                            return (
+                                <div className="relative">
+                                    {selectedGenres.includes(g) &&
+                                        <div className={`${selectedGenres.includes(g) ? "transition-all absolute w-full aspect-square delay-50 ease-in-out duration-300 rounded-full bg-gray-900 -mt-10" : "hidden mt-0"} `}>
+
+                                        </div>
+                                    }
+                                    <div onClick={() => {
+                                        setSelectedGenres(g)
+                                    }} key={i} className={`
+                                            relative border-t-[1px] border-x-[1px] rounded-t-md transition-hover duration-150 ease-in-out border-gray-500 hover:-mt-3 py-2 -mb-5 w-full 
+                                            ${i >= genres.length - breakP ? "sm:aspect-square rounded-md border" : ""}  
+                                            ${selectedGenres.includes(g) ? " bg-teal-400 -mt-3 " : "bg-white"} 
+                                            `}>
+                                        <p className="font-bold text-2xl mx-2 2xl:text-4xl">{g.label}</p>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+                <div className="flex justify-center pt-4">
+                    <Button id="playGameButton" className={"border bg-white border-gray-500"} onClick={onPlay}>START</Button>
+                </div>
             </div>
-            <div className="flex justify-center">
-                <Button id="playGameButton" variant={"default"} onClick={onPlay} className='w-fit'>Start</Button>
-            </div>
-        </div>
+        </>
+
     )
 }
 

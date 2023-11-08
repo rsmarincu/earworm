@@ -5,13 +5,13 @@ const Player: React.FC = () => {
     const game = useGame()
 
     useEffect(() => {
-        let uri = `spotify:track:${game.game.currentTrack?.track.id}`
+        let uri = `spotify:track:${game.currentTrack?.track.id}`
         let script = document.createElement("script");
         script.src = "https://open.spotify.com/embed/iframe-api/v1"
         script.async = true
         document.body.appendChild(script);
 
-        if (game.game.currentTrack) {
+        if (game.currentTrack) {
             window.onSpotifyIframeApiReady = (IFrameAPI) => {
                 const element = document.getElementById("embed-iframe");
                 const options = {
@@ -26,7 +26,7 @@ const Player: React.FC = () => {
                     })
                     const nextButton = document.getElementById("nextButton")
                     nextButton?.addEventListener("click", () => {
-                        const uris = game.game.toGuess.map(t => t.id)
+                        const uris = game.toGuess.map(t => t.id)
                         const nextUri = uris.shift()
                         EmbedController.loadUri(`spotify:track:${nextUri}`)
                     })
@@ -38,7 +38,7 @@ const Player: React.FC = () => {
         return () => {
             script.remove()
         }
-    }, [game.game.currentTrack]);
+    }, [game.currentTrack]);
 
     return (
         <div id="embed-iframe"></div>

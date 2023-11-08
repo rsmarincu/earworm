@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { stringSimilarity } from "string-similarity-js";
+import { FrownIcon } from 'lucide-react';
 
 
 const threshold = 0.8
@@ -14,33 +15,36 @@ const wildcards = [
 
 const Player: React.FC = () => {
     const [guess, setGuess] = useState("")
-    const game = useGame()
+    const { currentTrack, setScore, setCurrentTrack, score, setGuessed, guessed, setFinished } = useGame()
 
     async function onGuess() {
-        if (!game.game.currentTrack) {
+        if (!currentTrack) {
             return
         }
-        let trackName = game.game.currentTrack?.track?.name.toLowerCase()
+
+        let trackName = currentTrack?.track?.artists[0].name.toLowerCase()
         wildcards.map(w => trackName = trackName.replace(w, ""))
 
         const g = guess.toLowerCase()
         if (stringSimilarity(trackName, g) > threshold) {
-            game.setGame({
-                score: game.game.score + 1,
-                toGuess: game.game.toGuess,
-                currentTrack: {
-                    track: game.game.currentTrack.track,
-                    guessed: true
-                }
+            setScore(score + 1)
+            setCurrentTrack({
+                track: currentTrack.track,
+                guessed: true
             })
+            setGuessed([...guessed, currentTrack.track])
         }
         setGuess("")
     }
 
     return (
-        <div className="flex w-1/2 space-x-2">
-            <Input onChange={e => setGuess(e.target.value)} value={guess} type="text" placeholder="Guess which song is playing!" />
-            <Button onClick={onGuess}>Guess</Button>
+        <div className="flex w-full space-x-2">
+            <Input onChange={e => setGuess(e.target.value)} value={guess} type="text" placeholder="Guess the artist!" className='bg-white border text-input' />
+            <Button onClick={onGuess} className='bg-white border'>Guess</Button>
+            <Button onClick={() => setFinished(true)} className='bg-white border'>
+                <p className='mr-1'>Give up</p>
+                <FrownIcon></FrownIcon>
+            </Button>
         </div>
     )
 }
