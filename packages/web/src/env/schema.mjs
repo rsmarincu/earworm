@@ -4,14 +4,6 @@ export const schema = z.object({
     NODE_ENV: z.enum(["development", "production"]),
     NEXTAUTH_URL: z.string().min(1),
     NEXTAUTH_SECRET: z.string().min(1),
-    AWS_ACCESS_KEY_ID:
-        process.env.NODE_ENV === 'production'
-            ? z.string().min(1)
-            : z.string().optional(),
-    AWS_SECRET_ACCESS_KEY:
-        process.env.NODE_ENV === 'production'
-            ? z.string().min(1)
-            : z.string().optional(),
     SPOTIFY_CLIENT_ID: z.string().min(1),
     SPOTIFY_CLIENT_SECRET: z.string().min(1),
 })
