@@ -1,4 +1,4 @@
-import { env } from "@/env/env.mjs";
+import { env } from "@/env.mjs";
 import spotifyProfile, { refreshAccessToken } from "@/lib/spotifyProfile";
 import NextAuth, { Account, AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";

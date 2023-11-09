@@ -21,5 +21,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.7.1"
+  }
 }

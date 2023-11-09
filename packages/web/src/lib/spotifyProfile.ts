@@ -1,6 +1,6 @@
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
-import { env } from '../env/env.mjs'
+import { env } from '../env.mjs'
 
 
 const spotifyProfile = SpotifyProvider({
