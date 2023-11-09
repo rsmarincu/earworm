@@ -1,18 +1,11 @@
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
+import { env } from '../env/env.mjs'
 
-if (!process.env.SPOTIFY_CLIENT_ID) {
-    console.log(process.env.SPOTIFY_CLIENT_ID)
-    throw new Error("Missing SPOTIFY_CLIENT_ID");
-}
-
-if (!process.env.SPOTIFY_CLIENT_SECRET) {
-    throw new Error("Missing SPOTIFY_CLIENT_SECRET");
-}
 
 const spotifyProfile = SpotifyProvider({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    clientId: env.SPOTIFY_CLIENT_ID,
+    clientSecret: env.SPOTIFY_CLIENT_SECRET,
 });
 
 const authURL = new URL("https://accounts.spotify.com/authorize");
