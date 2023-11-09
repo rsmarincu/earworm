@@ -1,3 +1,4 @@
+import { env } from "@/env/env.mjs";
 import spotifyProfile, { refreshAccessToken } from "@/lib/spotifyProfile";
 import NextAuth, { Account, AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -65,8 +66,8 @@ const authOptions: AuthOptions = {
 
     },
 
-    debug: process.env.NODE_ENV === "development",
-    secret: process.env.NEXTAUTH_SECRET,
+    debug: env.NODE_ENV === "development",
+    secret: env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions)
