@@ -10,4 +10,5 @@ if (!_env.success) {
     throw new Error("Invalid env vars")
 }
 
+console.log({ ..._env.data })
 export const env = { ..._env.data }
