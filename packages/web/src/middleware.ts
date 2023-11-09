@@ -1,7 +1,9 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import { env } from "./env/env.mjs";
 
 export async function middleware(req: NextRequest) {
+    console.log("___________ ", env.NEXTAUTH_URL, "___________")
     const token = await getToken({ req })
 
     const { pathname } = req.nextUrl
